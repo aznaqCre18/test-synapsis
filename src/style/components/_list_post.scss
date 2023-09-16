@@ -1,0 +1,14 @@
+.list-post {
+    .arrow-right {
+        transform: translateX(-60px);
+        opacity: 0;
+        transition: .2s ease-in-out;
+    }
+    
+    &:hover {
+        .arrow-right {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+}
