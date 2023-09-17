@@ -1,11 +1,8 @@
-import { StoreProvider } from '@/store/StoreProvider';
-import { Inter } from 'next/font/google'
 import { ToastContainer } from 'react-toastify';
+import { StoreProvider } from '@/store/StoreProvider';
 
 import './../style/index.scss';
 import 'react-toastify/dist/ReactToastify.css';
-
-const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
   title: 'Create Next App',
@@ -17,7 +14,7 @@ export default function RootLayout({ children }) {
     <>
       <StoreProvider>
         <html lang="en">
-          <body className={inter.className}>
+          <body>
             {children}
             <ToastContainer />
           </body>
