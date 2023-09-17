@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchPostsDetail } from '@/store/slices/postDetailSlice';
 import { fetchPostsComments } from '@/store/slices/commentSlice';
 import { MessageCircle } from 'react-feather';
+import Image from 'next/image';
+import LoadingAnimate from '../../../assets/icons/loading-animate.svg';
 
 const BlogPostDetail = ({ params }) => {
 
@@ -25,7 +27,9 @@ const BlogPostDetail = ({ params }) => {
 
     if (isLoadingPage || isLoading) {
         return (
-            <p>Loading...</p>
+            <div className="flex justify-center items-center h-screen">
+                <Image src={LoadingAnimate} alt="loading" width={42} />
+            </div>
         )
     } else {
         return (
@@ -45,9 +49,9 @@ const BlogPostDetail = ({ params }) => {
                 <div className="comment">
                     {
                         detailPostComments && detailPostComments.length > 0 ? (
-                            detailPostComments?.map(data => {
+                            detailPostComments?.map((data, idx) => {
                                 return (
-                                    <div className="py-8" style={{ borderBottom: '1px solid #E4E4E4' }}>
+                                    <div key={idx} className="py-8" style={{ borderBottom: '1px solid #E4E4E4' }}>
                                         <div className="top mb-4 font-light">
                                             <p className="font-bold">{data.name}</p>
                                             <p className='font-light'>{data.email}</p>

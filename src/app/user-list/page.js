@@ -1,5 +1,12 @@
 'use client'
 
+import React, { useEffect, useState } from 'react'
+import { Input, Table } from 'antd'
+import { useForm } from 'antd/es/form/Form';
+import Image from 'next/image';
+import { Plus, Search } from 'react-feather';
+import { useDispatch, useSelector } from 'react-redux';
+
 import ModalCreate from '@/components/ModalCreate';
 import ModalDelete from '@/components/ModalDelete';
 import ModalEdit from '@/components/ModalEdit';
@@ -8,12 +15,7 @@ import { createUser } from '@/store/slices/createUserSlice';
 import { deleteUser } from '@/store/slices/deleteUserSlice';
 import { editUser } from '@/store/slices/editUserSlice';
 import { fetchUsers } from '@/store/slices/usersSlice';
-import { Input, Table } from 'antd'
-import { useForm } from 'antd/es/form/Form';
-import React, { useEffect, useState } from 'react'
-import { Plus, Search } from 'react-feather';
-import { useDispatch, useSelector } from 'react-redux';
-import { ToastContainer } from 'react-toastify';
+import LoadingAnimate from '../../assets/icons/loading-animate.svg';
 
 const columns = (actionBtnEdit, actionBtnDelete) => [
     {
@@ -58,14 +60,19 @@ const UserList = () => {
     const [idEdit, setIdEdit] = useState(null);
     const [idDelete, setIdDelete] = useState(null);
     const [valueSearch, setValueSearch] = useState("");
+    const [loading, setLoading] = useState(true);
 
     const dispatch = useDispatch();
-    const { dataUsers } = useSelector(state => state.users);
+    const { dataUsers, isLoading } = useSelector(state => state.users);
     const [form] = useForm();
     const [formEdit] = useForm();
 
     useEffect(() => {
         dispatch(fetchUsers());
+
+        setTimeout(() => {
+            setLoading(false);
+        }, 500);
     }, []);
 
     useEffect(() => {
@@ -127,32 +134,39 @@ const UserList = () => {
         setValueSearch(e.target.value);
     }
 
-    return (
-        <div className="max-w-screen-xl w-screen m-auto px-10">
-            <ToastContainer />
-            <HeaderPage />
-            <div className='flex items-center justify-between'>
-                <h1 className='text-[36px] my-10' >List User</h1>
-                <button onClick={() => setIsModalActive(current => !current)} className='flex rounded-[6px] items-center bg-[#34BE82] h-[38px] text-white gap-1 py-[8px] px-[10px]'>
-                    <Plus size={20} />
-                    <span>Tambah User</span>
-                </button>
+    if (loading || isLoading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <Image src={LoadingAnimate} alt="loading" width={42} />
             </div>
-            <div className='mb-6'>
-                <Input onChange={handleChangeSearch} size="large" placeholder="Search by name" prefix={<Search size={18} className='mr-4' />} />
+        )
+    } else {
+        return (
+            <div className="max-w-screen-xl w-screen m-auto px-10">
+                <HeaderPage />
+                <div className='flex items-center justify-between'>
+                    <h1 className='text-[36px] my-10' >List User</h1>
+                    <button onClick={() => setIsModalActive(current => !current)} className='flex rounded-[6px] items-center bg-[#34BE82] h-[38px] text-white gap-1 py-[8px] px-[10px]'>
+                        <Plus size={20} />
+                        <span>Tambah User</span>
+                    </button>
+                </div>
+                <div className='mb-6'>
+                    <Input onChange={handleChangeSearch} size="large" placeholder="Search by name" prefix={<Search size={18} className='mr-4' />} />
+                </div>
+                <div className="w-full">
+                    <Table
+                        columns={columns(handleOpenModalEdit, handleOpenModalDelete)}
+                        dataSource={filteredData}
+                        scroll={{ x: true }}
+                    />
+                </div>
+                <ModalCreate isModalOpen={isModalActive} handleOk={handleSubmit} handleCancel={setIsModalActive} form={form} />
+                <ModalEdit isModalOpen={isModalEditActive} handleOk={handleSubmitEdit} handleCancel={setIsModalEditActive} form={formEdit} />
+                <ModalDelete isModalOpen={isModalDeleteActive} handleOk={handleSubmitDelete} handleCancel={setIsModalDeleteActive} />
             </div>
-            <div className="w-full">
-                <Table
-                    columns={columns(handleOpenModalEdit, handleOpenModalDelete)}
-                    dataSource={filteredData}
-                    scroll={{ x: true }}
-                />
-            </div>
-            <ModalCreate isModalOpen={isModalActive} handleOk={handleSubmit} handleCancel={setIsModalActive} form={form} />
-            <ModalEdit isModalOpen={isModalEditActive} handleOk={handleSubmitEdit} handleCancel={setIsModalEditActive} form={formEdit} />
-            <ModalDelete isModalOpen={isModalDeleteActive} handleOk={handleSubmitDelete} handleCancel={setIsModalDeleteActive} />
-        </div>
-    )
+        )
+    }
 }
 
 export default UserList
