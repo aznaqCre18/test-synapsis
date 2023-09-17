@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { Input, Table } from 'antd'
 import { useForm } from 'antd/es/form/Form';
 import Image from 'next/image';
-import { Plus, Search } from 'react-feather';
+import { Edit, Edit2, Plus, Search, Trash2 } from 'react-feather';
 import { useDispatch, useSelector } from 'react-redux';
 
 import ModalCreate from '@/components/ModalCreate';
@@ -51,8 +51,8 @@ const columns = (actionBtnEdit, actionBtnDelete) => [
       render: (action, data) => {
         return (
             <div className='flex gap-2'>
-                <button onClick={() => actionBtnEdit(data)} className='rounded-[6px] py-[8px] px-[12px] bg-[#FFB72B] text-white'>EDIT</button>
-                <button onClick={() => actionBtnDelete(data.id)} className='rounded-[6px] py-[8px] px-[12px] bg-[#FD5D5D] text-white'>DELETE</button>
+                <button onClick={() => actionBtnEdit(data)} className='rounded-[6px] py-[8px] px-[8px] bg-[#FFB72B] text-white'><Edit size={18} /></button>
+                <button onClick={() => actionBtnDelete(data.id)} className='rounded-[6px] py-[8px] px-[8px] bg-[#FD5D5D] text-white'><Trash2 size={18} /></button>
             </div>
         )
       }
