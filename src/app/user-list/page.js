@@ -8,10 +8,10 @@ import { createUser } from '@/store/slices/createUserSlice';
 import { deleteUser } from '@/store/slices/deleteUserSlice';
 import { editUser } from '@/store/slices/editUserSlice';
 import { fetchUsers } from '@/store/slices/usersSlice';
-import { Table } from 'antd'
+import { Input, Table } from 'antd'
 import { useForm } from 'antd/es/form/Form';
 import React, { useEffect, useState } from 'react'
-import { Plus } from 'react-feather';
+import { Plus, Search } from 'react-feather';
 import { useDispatch, useSelector } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 
@@ -51,11 +51,13 @@ const columns = (actionBtnEdit, actionBtnDelete) => [
 ];
 
 const UserList = () => {
+    const [dataTableUsers, setDataTableUsers] = useState([]);
     const [isModalActive, setIsModalActive] = useState(false);
     const [isModalEditActive, setIsModalEditActive] = useState(false);
     const [isModalDeleteActive, setIsModalDeleteActive] = useState(false);
     const [idEdit, setIdEdit] = useState(null);
     const [idDelete, setIdDelete] = useState(null);
+    const [valueSearch, setValueSearch] = useState("");
 
     const dispatch = useDispatch();
     const { dataUsers } = useSelector(state => state.users);
@@ -64,7 +66,12 @@ const UserList = () => {
 
     useEffect(() => {
         dispatch(fetchUsers());
-    }, [])
+    }, []);
+
+    useEffect(() => {
+        setDataTableUsers(dataUsers);
+    }, [dataUsers])
+    
     
     const handleSubmit = (data) => {
         dispatch(createUser(data));
@@ -114,21 +121,30 @@ const UserList = () => {
         }, 500);
     }
 
+    const filteredData = dataTableUsers.filter(item => String(item.name).toLowerCase().startsWith(valueSearch.toLowerCase()));
+
+    const handleChangeSearch = (e) => {
+        setValueSearch(e.target.value);
+    }
+
     return (
         <div className="max-w-screen-xl w-screen m-auto px-10">
             <ToastContainer />
             <HeaderPage />
             <div className='flex items-center justify-between'>
-                <h1 className='text-[40px] my-10' >List User</h1>
-                <button onClick={() => setIsModalActive(current => !current)} className='flex rounded-[6px] items-center bg-[#34BE82] h-[42px] text-white gap-2 py-[8px] px-[12px]'>
-                    <Plus />
+                <h1 className='text-[36px] my-10' >List User</h1>
+                <button onClick={() => setIsModalActive(current => !current)} className='flex rounded-[6px] items-center bg-[#34BE82] h-[38px] text-white gap-1 py-[8px] px-[10px]'>
+                    <Plus size={20} />
                     <span>Tambah User</span>
                 </button>
+            </div>
+            <div className='mb-6'>
+                <Input onChange={handleChangeSearch} size="large" placeholder="Search by name" prefix={<Search size={18} className='mr-4' />} />
             </div>
             <div className="w-full">
                 <Table
                     columns={columns(handleOpenModalEdit, handleOpenModalDelete)}
-                    dataSource={dataUsers}
+                    dataSource={filteredData}
                     scroll={{ x: true }}
                 />
             </div>
