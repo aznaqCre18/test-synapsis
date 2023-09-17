@@ -5,7 +5,7 @@ I have already deployed this project using Vercel, so it can also be accessed th
 ## Prerequisites
 
 1. Node js v16.8.x or later
-2. Visual studio code ord any text editor
+2. Visual studio code or any text editor
 3. Web Browser
 
 ## Installation
