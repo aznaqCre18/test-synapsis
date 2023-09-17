@@ -32,11 +32,18 @@ const columns = (actionBtnEdit, actionBtnDelete) => [
       title: 'Gender',
       dataIndex: 'gender',
       width: 300,
+      render: (gender) => <span className="capitalize">{gender}</span>
     },
     {
       title: 'Status',
       dataIndex: 'status',
       width: 300,
+      render: (status) => 
+        status === 'active' ? (
+            <div className="px-[8px] py-[4px] bg-[#34BE82] w-fit rounded-md text-white">Active</div>
+        ) : (
+            <div className="px-[8px] py-[4px] bg-[#FF4444] w-fit rounded-md text-white">Inactive</div>
+        )
     },
     {
       title: 'Action',
