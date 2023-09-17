@@ -121,7 +121,7 @@ const UserList = () => {
         }, 500);
     }
 
-    const filteredData = dataTableUsers.filter(item => String(item.name).toLowerCase().startsWith(valueSearch.toLowerCase()));
+    const filteredData = dataTableUsers?.filter(item => String(item.name).toLowerCase().startsWith(valueSearch.toLowerCase()));
 
     const handleChangeSearch = (e) => {
         setValueSearch(e.target.value);
