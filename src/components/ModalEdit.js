@@ -45,7 +45,7 @@ const ModalEdit = ({ isModalOpen, handleOk, handleCancel, form }) => {
                         }
                     ]}
                 >
-                    <Input placeholder="Ex. darma@mail.com" />
+                    <Input placeholder="Ex. darma@mail.com" type="email" />
                 </Form.Item>
                 <Form.Item
                     label="Gender"
