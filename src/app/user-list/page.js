@@ -1,13 +1,21 @@
 'use client'
 
+import ModalCreate from '@/components/ModalCreate';
+import ModalDelete from '@/components/ModalDelete';
+import ModalEdit from '@/components/ModalEdit';
 import HeaderPage from '@/components/header'
+import { createUser } from '@/store/slices/createUserSlice';
+import { deleteUser } from '@/store/slices/deleteUserSlice';
+import { editUser } from '@/store/slices/editUserSlice';
 import { fetchUsers } from '@/store/slices/usersSlice';
 import { Table } from 'antd'
-import React, { useEffect } from 'react'
+import { useForm } from 'antd/es/form/Form';
+import React, { useEffect, useState } from 'react'
 import { Plus } from 'react-feather';
 import { useDispatch, useSelector } from 'react-redux';
+import { ToastContainer } from 'react-toastify';
 
-const columns = [
+const columns = (actionBtnEdit, actionBtnDelete) => [
     {
       title: 'Name',
       dataIndex: 'name',
@@ -31,11 +39,11 @@ const columns = [
     {
       title: 'Action',
       dataIndex: 'action',
-      render: () => {
+      render: (action, data) => {
         return (
             <div className='flex gap-2'>
-                <button className='rounded-[6px] py-[8px] px-[12px] bg-[#FFB72B] text-white'>EDIT</button>
-                <button className='rounded-[6px] py-[8px] px-[12px] bg-[#FD5D5D] text-white'>DELETE</button>
+                <button onClick={() => actionBtnEdit(data)} className='rounded-[6px] py-[8px] px-[12px] bg-[#FFB72B] text-white'>EDIT</button>
+                <button onClick={() => actionBtnDelete(data.id)} className='rounded-[6px] py-[8px] px-[12px] bg-[#FD5D5D] text-white'>DELETE</button>
             </div>
         )
       }
@@ -43,34 +51,90 @@ const columns = [
 ];
 
 const UserList = () => {
+    const [isModalActive, setIsModalActive] = useState(false);
+    const [isModalEditActive, setIsModalEditActive] = useState(false);
+    const [isModalDeleteActive, setIsModalDeleteActive] = useState(false);
+    const [idEdit, setIdEdit] = useState(null);
+    const [idDelete, setIdDelete] = useState(null);
 
     const dispatch = useDispatch();
     const { dataUsers } = useSelector(state => state.users);
+    const [form] = useForm();
+    const [formEdit] = useForm();
 
     useEffect(() => {
         dispatch(fetchUsers());
     }, [])
     
+    const handleSubmit = (data) => {
+        dispatch(createUser(data));
 
-    console.log(dataUsers);
+        setTimeout(() => {
+            form.resetFields();
+            setIsModalActive(false);
+            dispatch(fetchUsers());
+        }, 500);
+    }
+
+    const handleOpenModalEdit = (data) => {
+        setIsModalEditActive(current => !current);
+
+        setIdEdit(data.id);
+        formEdit.setFieldsValue({
+            name: data.name,
+            gender: data.gender,
+            status: data.status,
+            email: data.email,
+        })
+    }
+
+    const handleSubmitEdit = (data) => {
+        const newData = {...data, id: idEdit}
+
+        dispatch(editUser(newData));
+
+        setTimeout(() => {
+            formEdit.resetFields();
+            setIsModalEditActive(false);
+            dispatch(fetchUsers());
+        }, 500);
+    }
+
+    const handleOpenModalDelete = (id) => {
+        setIsModalDeleteActive(current => !current)
+        setIdDelete(id);
+    }
+    
+    const handleSubmitDelete = () => {
+        dispatch(deleteUser(idDelete));
+
+        setTimeout(() => {
+            setIsModalDeleteActive(false);
+            dispatch(fetchUsers());
+        }, 500);
+    }
 
     return (
         <div className="max-w-screen-xl w-screen m-auto px-10">
+            <ToastContainer />
             <HeaderPage />
             <div className='flex items-center justify-between'>
                 <h1 className='text-[40px] my-10' >List User</h1>
-                <button className='flex rounded-[6px] items-center bg-[#34BE82] h-[42px] text-white gap-2 py-[8px] px-[12px]'>
+                <button onClick={() => setIsModalActive(current => !current)} className='flex rounded-[6px] items-center bg-[#34BE82] h-[42px] text-white gap-2 py-[8px] px-[12px]'>
                     <Plus />
                     <span>Tambah User</span>
                 </button>
             </div>
             <div className="w-full">
                 <Table
-                    columns={columns}
+                    columns={columns(handleOpenModalEdit, handleOpenModalDelete)}
                     dataSource={dataUsers}
                     scroll={{ x: true }}
                 />
             </div>
+            <ModalCreate isModalOpen={isModalActive} handleOk={handleSubmit} handleCancel={setIsModalActive} form={form} />
+            <ModalEdit isModalOpen={isModalEditActive} handleOk={handleSubmitEdit} handleCancel={setIsModalEditActive} form={formEdit} />
+            <ModalDelete isModalOpen={isModalDeleteActive} handleOk={handleSubmitDelete} handleCancel={setIsModalDeleteActive} />
         </div>
     )
 }

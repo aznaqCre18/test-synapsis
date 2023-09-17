@@ -12,6 +12,9 @@ export const fetchUsers = createAsyncThunk("fetchUsers", async () => {
     const options = {
         method: 'GET',
         url: `${SERVICES.GET_USERS}?page=1&per_page=100`,
+        headers: {
+            Authorization: SERVICES.TOKEN
+        },
     }
 
     const response = await fetch(options);
