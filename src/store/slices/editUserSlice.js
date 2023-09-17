@@ -1,7 +1,8 @@
+import { toast } from "react-toastify";
+
 import { SERVICES } from "@/config/services";
 import fetch from "@/utils/fetch";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { toast } from "react-toastify";
 
 const initialStateEditUser = {
     isError: false,

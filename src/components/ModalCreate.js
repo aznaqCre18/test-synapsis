@@ -1,6 +1,5 @@
-import { Form, Input, Modal, Select } from 'antd'
-import { useForm } from 'antd/es/form/Form';
-import React from 'react'
+import React from 'react';
+import { Form, Input, Modal, Select } from 'antd';
 
 const ModalCreate = ({ isModalOpen, handleOk, handleCancel, form }) => {
     // const [form] = useForm();
